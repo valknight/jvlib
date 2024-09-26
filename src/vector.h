@@ -149,8 +149,8 @@ namespace jvl
 
         
 
-        reference operator[](std::size_t i) noexcept;
-        const_reference operator[](std::size_t i) const noexcept;
+        reference operator[](std::size_t i) noexcept { return _data[i]; };
+        const_reference operator[](std::size_t i) const noexcept { return _data[i]; };
 
         iterator insert(const_iterator position, const_reference i);
         iterator insert(const_iterator position, value_type i);

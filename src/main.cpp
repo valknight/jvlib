@@ -1,16 +1,23 @@
 #include <iostream>
 
 #include "array.h"
+#include "vector.h"
 
 int main()
 {
-    jvl::array<int, 5> arr { 0, 1, 2, 3, 4 };
-    for (int i : arr)
+    jvl::vector<uint32_t> vec;
+    vec.push_back(4);
+    vec.push_back(7);
+    vec.reserve(4);
+    vec.push_back(8);
+    vec.pop_back();
+
+    for (auto& i : vec)
     {
         std::cout << i << std::endl;
     }
-    arr[3] = 10;
-    std::cout << arr[3] << std::endl;
 
+    std::cout << vec[0] << std::endl;
+    
     return 0;
 }
