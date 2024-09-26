@@ -145,10 +145,7 @@ namespace jvl
         iterator end() noexcept { return _data + _size; }
         const_iterator end() const noexcept { return _data; }
         const_iterator cend() const noexcept { return _data; }
-
-
         
-
         reference operator[](std::size_t i) noexcept { return _data[i]; };
         const_reference operator[](std::size_t i) const noexcept { return _data[i]; };
 
