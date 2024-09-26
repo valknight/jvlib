@@ -39,6 +39,10 @@ namespace jvl
             new(ptr) value_type(std::forward<Args>(args)...);
         }
 
+        inline bool needs_shrink() {
+            return (_size < _capacity / 2);
+        }
+
         void shrink_if_needed() {
             if (needs_shrink()) {
                 shrink(_capacity / 2);
@@ -91,6 +95,47 @@ namespace jvl
             
             if (data) _alloc.deallocate(data, capacity);
         }
+
+        void shrink(size_type capacity) {
+            if (capacity >= _capacity) {
+                return;
+            }
+
+            int new_size = std::min(_capacity - 1, _size);
+
+            pointer data = _alloc.allocate(capacity);
+            if (_data) {
+                if constexpr (std::is_trivial_v<value_type>) {
+                    // use new size so we don't go out of bounds
+                    std::memcpy(data, _data, new_size);
+                }
+                pointer new_it { data };
+                pointer new_end = data + _size;
+                pointer it = _data;
+                pointer iend = _data + _size;
+                
+                for (; new_it != new_end; ++new_it, ++it)
+                {
+                    construct(new_it, std::move(*it));
+                    it->~value_type();
+                }
+                // cleanup rest
+                for (; it != iend; ++it) {
+                    it->~value_type();
+                }
+            }
+
+            std::swap(_data, data);
+            std::swap(_capacity, capacity);
+            _size = new_size;
+            if (data) _alloc.deallocate(data, capacity);
+        }
+
+        void pop_back() {
+            _size -= 1;
+            shrink_if_needed();
+        }
+
         size_type capacity() const noexcept { return _capacity; }
 
         iterator begin() noexcept { return _data; }
