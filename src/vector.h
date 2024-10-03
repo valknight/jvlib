@@ -39,16 +39,6 @@ namespace jvl
             new(ptr) value_type(std::forward<Args>(args)...);
         }
 
-        inline bool needs_shrink() {
-            return (_size < _capacity / 2);
-        }
-
-        void shrink_if_needed() {
-            if (needs_shrink()) {
-                shrink(_capacity / 2);
-            }
-        }
-
     public:
         constexpr vector() noexcept = default;
 
@@ -131,9 +121,14 @@ namespace jvl
             if (data) _alloc.deallocate(data, capacity);
         }
 
+        void shrink_to_size() {
+            if (_size < _capacity) {
+                shrink(_size);
+            }
+        }
+
         void pop_back() {
             _size -= 1;
-            shrink_if_needed();
         }
 
         size_type capacity() const noexcept { return _capacity; }
