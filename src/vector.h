@@ -48,12 +48,60 @@ namespace jvl
             , _capacity { capacity }
         {}
 
-        void push_back(value_type value) {
-            if (_size + 1 >= _capacity) {
+        ~vector()
+        {
+            if constexpr (std::is_trivial_v<value_type>)
+                return;
+            
+            if (_data == nullptr)
+                return;
+            
+            clear();
+
+            _alloc.deallocate(_data, _capacity);
+        }
+
+        void clear() {
+            for (size_type i = 0; i < _size; ++i) {
+                _data[i].~T();
+            }
+        }
+
+        void push_back(const_reference value) {
+            emplace_back(value);
+        }
+
+        template<typename ...Args>
+        void emplace_back(Args&& ...args)
+        {
+            if (_size >= _capacity) {
                 grow();
             }
-            construct(_data + _size, value);
+            construct(_data + _size, std::forward<Args>(args)...);
             _size += 1;
+        }
+
+        void resize(size_type size)
+        {
+            if (size <= _size)
+                return;
+            
+            // Expanding
+            size_type prev_size = _size;
+            reserve(size);
+            _size = size;
+
+            if constexpr (std::is_trivial_v<value_type>) {
+                memset(_data + prev_size, 0, size - prev_size);
+            }
+            else {
+                pointer alloc_it = _data + _size;
+                pointer alloc_it_end = _data + size;
+                for (; alloc_it != alloc_it_end; ++alloc_it)
+                {
+                    construct(alloc_it);
+                }
+            }
         }
 
         void reserve(size_type capacity) {
