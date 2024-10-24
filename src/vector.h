@@ -179,7 +179,8 @@ namespace jvl
             _size -= 1;
         }
 
-        size_type capacity() const noexcept { return _capacity; }
+        [[nodiscard]] size_type capacity() const noexcept { return _capacity; }
+        [[nodiscard]] size_type size() const noexcept { return _size; }
 
         iterator begin() noexcept { return _data; }
         const_iterator begin() const noexcept { return _data; }
