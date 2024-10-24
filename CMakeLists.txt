@@ -5,7 +5,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin)
 
-project(ToBeNamed LANGUAGES C CXX)
+project(jvl LANGUAGES C CXX)
 
-add_executable(ToBeNamed src/main.cpp)
+add_executable(jvl src/main.cpp
+        src/vector.h
+        src/vector_tests.h
+        src/testing.h)
 
