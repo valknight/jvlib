@@ -63,8 +63,8 @@ namespace jvl::testing
             }
             catch(const std::exception& e)
             {
-                std::cerr << e.what() << '\n';
-                return "🟥 Failure";
+                std::cerr << e.what() << " ";
+                return "🟥 Failed";
             }
         }
     };
@@ -74,8 +74,22 @@ namespace jvl::testing
 
     inline void run_tests()
     {
+        size_t max_name_size = 0;
+        for (auto &test: tests) {
+            size_t length = test->get_name().length();
+            if (length > max_name_size) {
+                max_name_size = length;
+            }
+        }
         for (auto &test : tests) {
-            std::cout << "" << test->get_name() << " " << test->run() << "\n";
+            std::cout << test->get_name();
+            size_t length = test->get_name().length();
+            for (; length < max_name_size; length++)
+            {
+                std::cout << " ";
+            }
+            
+            std::cout << " " << test->run() << "\n";
         }
     }
 }
