@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
-#include <memory>
+// dogfood our own vector.h
+#include "vector.h"
 #include <iostream>
 #include <stdexcept>
 
