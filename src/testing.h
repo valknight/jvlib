@@ -4,6 +4,7 @@
 #include "vector.h"
 #include <iostream>
 #include <stdexcept>
+#include <functional>
 
 namespace jvl::testing
 {
