@@ -9,7 +9,7 @@ namespace jvl::testing
 {
     class test;
 
-    std::vector<test *> tests{};
+    vector<test *> tests{};
 
     inline void add_test(test *t) {
         tests.emplace_back(t);
