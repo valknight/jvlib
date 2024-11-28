@@ -82,7 +82,6 @@ public:
             v.shrink_to_size();
             equal(v.size(), v.capacity(), "size not equal on shrink");
         }
-        assert(false);
     });
 
     TEST(VectorReserve, [](){
