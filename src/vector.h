@@ -5,6 +5,7 @@
 #include <utility>
 #include <algorithm>
 #include <type_traits>
+#include "expect.h"
 
 namespace jvl
 {
@@ -229,6 +230,16 @@ namespace jvl
             _size -= 1;
         }
 
+        reference at(size_type i) noexcept {
+            expect (i < _size);
+            return _data[i];
+        }
+
+        const_reference at(size_type i) const noexcept {
+            expect (i < _size);
+            return _data[i];
+        }
+
         [[nodiscard]] size_type capacity() const noexcept { return _capacity; }
         [[nodiscard]] size_type size() const noexcept { return _size; }
 
@@ -240,8 +251,8 @@ namespace jvl
         const_iterator end() const noexcept { return _data + _size; }
         const_iterator cend() const noexcept { return _data + _size; }
         
-        reference operator[](std::size_t i) noexcept { return _data[i]; };
-        const_reference operator[](std::size_t i) const noexcept { return _data[i]; };
+        reference operator[](size_type i) noexcept { return _data[i]; };
+        const_reference operator[](size_type i) const noexcept { return _data[i]; };
 
         iterator insert(const_iterator position, const_reference i);
         iterator insert(const_iterator position, value_type i);
