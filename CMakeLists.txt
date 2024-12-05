@@ -7,7 +7,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin)
 
 project(jvl LANGUAGES C CXX)
 
-file( GLOB SRC_FILES src/*.cpp src/*.h)
+file(GLOB SRC_FILES src/*.cpp src/*.h)
 
 add_executable(jvl ${SRC_FILES})
 
