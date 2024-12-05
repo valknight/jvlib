@@ -39,6 +39,20 @@ namespace jvl
             new(ptr) value_type(std::forward<Args>(args)...);
         }
 
+        void assign(const vector& rhs)
+        {
+            if constexpr (std::is_trivial_v<value_type>)
+            {
+                std::memcpy(_data, rhs._data, sizeof(value_type) * rhs._size);
+                _size = rhs._size;
+                return;
+            }
+            for (auto &i : rhs)
+            {
+                push_back(i);              
+            }
+        }
+
     public:
         constexpr vector() noexcept = default;
 
@@ -47,6 +61,38 @@ namespace jvl
             , _size { 0 }
             , _capacity { capacity }
         {}
+
+        vector(const vector& rhs)
+            : vector(rhs._capacity, rhs._alloc)
+        {
+            assign(rhs);
+        }
+
+        vector& operator=(const vector& rhs)
+        {
+            if (this == &rhs)
+            {
+                return *this;
+            }
+            clear();
+            assign(rhs);
+            return *this; 
+        }
+
+        bool operator==(const vector& rhs) const
+        {
+            if (_size != rhs._size)
+                return false;
+            if constexpr (std::is_trivial_v<value_type>)
+            {
+                return (std::memcmp(_data, rhs._data, sizeof(value_type) * rhs._size) == 0);
+            }
+            for (size_t i = 0; i < _size; i++)
+            {
+                if (_data[i] != rhs[i]) return false;
+            }
+            return true;
+        }
 
         ~vector()
         {
@@ -62,9 +108,13 @@ namespace jvl
         }
 
         void clear() {
+            if constexpr (std::is_trivial_v<value_type>)
+                return;
+            
             for (size_type i = 0; i < _size; ++i) {
                 _data[i].~T();
             }
+            _size = 0;
         }
 
         void push_back(const_reference value) {
@@ -187,8 +237,8 @@ namespace jvl
         const_iterator cbegin() const noexcept { return _data; }
 
         iterator end() noexcept { return _data + _size; }
-        const_iterator end() const noexcept { return _data; }
-        const_iterator cend() const noexcept { return _data; }
+        const_iterator end() const noexcept { return _data + _size; }
+        const_iterator cend() const noexcept { return _data + _size; }
         
         reference operator[](std::size_t i) noexcept { return _data[i]; };
         const_reference operator[](std::size_t i) const noexcept { return _data[i]; };

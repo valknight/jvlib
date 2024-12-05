@@ -24,14 +24,14 @@ public:
         jvl::vector<int> v{};
 
         v.push_back(0);
-        equal(v.size(), size_t(1));
-        equal(v.capacity(), size_t(2));
+        jvl::testing::equal(v.size(), size_t(1));
+        jvl::testing::equal(v.capacity(), size_t(2));
         v.push_back(0);
-        equal(v.size(), size_t(2));
-        equal(v.capacity(), size_t(2));
+        jvl::testing::equal(v.size(), size_t(2));
+        jvl::testing::equal(v.capacity(), size_t(2));
         v.push_back(0);
-        equal(v.size(), size_t(3));
-        equal(v.capacity(), size_t(4));
+        jvl::testing::equal(v.size(), size_t(3));
+        jvl::testing::equal(v.capacity(), size_t(4));
     });
 
     TEST(VectorEmplaceBack, []() {
@@ -39,7 +39,7 @@ public:
 
         v.emplace_back(size_t(1));
         v.emplace_back(size_t(2));
-        equal(v.size(), size_t(2));
+        jvl::testing::equal(v.size(), size_t(2));
     });
 
     TEST(VectorEmplaceBackNonTrivialDeletedDefaultConstructor, []() {
@@ -48,7 +48,7 @@ public:
         {
             v.emplace_back(size_t(1));
         }
-        equal(size_t(32), v.size());
+        jvl::testing::equal(size_t(32), v.size());
     });
 
     TEST(VectorPopBackNonTrivialDeletedDefaultConstructor, []() {
@@ -61,7 +61,7 @@ public:
         {
             v.pop_back();
         }
-        equal(size_t(0), v.size());
+        jvl::testing::equal(size_t(0), v.size());
     });
 
     TEST(VectorEmplaceBackNontrivial, []() {
@@ -75,19 +75,50 @@ public:
         for (size_t i = 0; i < 32; i++) {
             v.emplace_back(i);
             v.shrink_to_size();
-            equal(v.size(), v.capacity());
+            jvl::testing::equal(v.size(), v.capacity());
         }
         for (size_t i = 0; i < 32; i++) {
             v.pop_back();
             v.shrink_to_size();
-            equal(v.size(), v.capacity(), "size not equal on shrink");
+            jvl::testing::equal(v.size(), v.capacity(), "size not equal on shrink");
         }
     });
 
     TEST(VectorReserve, [](){
         jvl::vector<int> v{};
         v.reserve(128);
-        equal(size_t(0), v.size(), "size non-zero");
-        equal(size_t(128), v.capacity(), "capacity");
+        jvl::testing::equal(size_t(0), v.size(), "size non-zero");
+        jvl::testing::equal(size_t(128), v.capacity(), "capacity");
+    });
+
+    TEST(VectorAssignValueType, [](){
+        jvl::vector<int> v{};
+        for (size_t i = 0; i < 16; i++)
+        {
+            v.push_back(i);
+        }
+
+        jvl::vector<int> v1 = v;
+        jvl::testing::equal(v.size(), v1.size(), "size not equal");
+        for (size_t i = 0; i < v1.size(); i++)
+        {
+            jvl::testing::equal(v[i], v1[i], "element not equal");
+        }
+    });
+
+    TEST(VectorAssignNontrivial, [](){
+        jvl::vector<std::string> v{};
+        
+        for (size_t i = 0; i < 16; i++)
+        {
+            v.push_back(std::string{"aaaa"});
+        }
+        
+        jvl::vector<std::string> v1 = v;
+        jvl::testing::equal(v.size(), v1.size(), "size not equal");
+        for (size_t i = 0; i < v1.size(); i++)
+        {
+            jvl::testing::equal(v[i], v1[i], "element not equal");
+        }
     });
 }
