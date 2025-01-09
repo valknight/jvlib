@@ -23,9 +23,10 @@ namespace jvl
         using const_iterator = const T *;
 
         using size_type = std::size_t;
+        // todo: move this into a template
         using allocator_type = std::allocator<T>;
 
-    protected :
+    protected:
         pointer _data {nullptr};
         size_type _size{0};
         size_type _capacity{0};
@@ -54,6 +55,20 @@ namespace jvl
             }
         }
 
+        inline void reset()
+        {
+            _data = nullptr;
+            _size = 0;
+            _capacity = 0;
+            _alloc = allocator_type{}
+        }
+
+        inline void deallocate()
+        {
+            if (_data)
+                _alloc.deallocate(_data, _capacity);
+        }
+
     public:
         constexpr vector() noexcept = default;
 
@@ -76,8 +91,36 @@ namespace jvl
                 return *this;
             }
             clear();
+            deallocate();
             assign(rhs);
             return *this; 
+        }
+
+        // TODO: move contructor & move assignment
+
+        vector(vector&& rhs) noexcept
+            : _data( rhs._data )
+            , _size { rhs._size }
+            , _capacity { rhs._capacity }
+            , _alloc { rhs._alloc }
+        {
+            rhs.reset();
+        }
+
+        vector& operator=(vector&& rhs) noexcept
+        {
+            if (this == &rhs)
+                return *this;
+            
+            clear();
+            deallocate();
+            
+            std::swap(_data, rhs._data);
+            std::swap(_size, rhs._size);
+            std::swap(_capacity, rhs._capacity);
+            std::swap(_alloc, rhs._alloc);
+
+            return *this;
         }
 
         bool operator==(const vector& rhs) const
@@ -97,21 +140,20 @@ namespace jvl
 
         ~vector()
         {
-            if constexpr (std::is_trivial_v<value_type>)
-                return;
-            
-            if (_data == nullptr)
-                return;
-            
-            clear();
-
-            _alloc.deallocate(_data, _capacity);
+            if constexpr (!std::is_trivial_v<value_type>)
+            {
+                clear();
+            }
+            deallocate();
         }
 
         void clear() {
             if constexpr (std::is_trivial_v<value_type>)
+            {
+                _size = 0;
                 return;
-            
+            }
+
             for (size_type i = 0; i < _size; ++i) {
                 _data[i].~T();
             }
@@ -254,10 +296,17 @@ namespace jvl
         reference operator[](size_type i) noexcept { return _data[i]; };
         const_reference operator[](size_type i) const noexcept { return _data[i]; };
 
-        iterator insert(const_iterator position, const_reference i);
-        iterator insert(const_iterator position, value_type i);
+        iterator insert(const_iterator position, const_reference i) {
+
+        }
+
+        iterator insert(const_iterator position, value_type i) {
+
+        }
 
         iterator erase(const_iterator position);
         iterator erase(const_iterator first, const_iterator last);
+
+        // swap
     };
 }
