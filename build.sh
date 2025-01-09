@@ -1,5 +1,6 @@
 #!/bin/bash
+mkdir build
+mkdir out
 cd build
 cmake ..
 make
-cp bin/jvl ../
